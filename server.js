@@ -37,10 +37,14 @@ app.get('/', (req, res) => {
 app.get('/year/:selected_year', (req, res) => {
     console.log(req.params.selected_year);
     fs.readFile(path.join(template_dir, 'year.html'), (err, template) => {
-        // modify `template` and send response
-        // this will require a query to the SQL database
+        if(err){
+            res.status(404).send("File not found");
+        } else {
+            res.status(200).type('html').send('year.html'); // <-- you may need to change this
 
-        res.status(200).type('html').send(template); // <-- you may need to change this
+        }
+
+        
     });
 });
 
@@ -48,10 +52,15 @@ app.get('/year/:selected_year', (req, res) => {
 app.get('/state/:selected_state', (req, res) => {
     console.log(req.params.selected_state);
     fs.readFile(path.join(template_dir, 'state.html'), (err, template) => {
+        if(err){
+            res.status(404).send("File not found");
+        } else {
+            
+        }
         // modify `template` and send response
         // this will require a query to the SQL database
 
-        res.status(200).type('html').send(template); // <-- you may need to change this
+        
     });
 });
 
@@ -61,8 +70,12 @@ app.get('/energy/:selected_energy_source', (req, res) => {
     fs.readFile(path.join(template_dir, 'energy.html'), (err, template) => {
         // modify `template` and send response
         // this will require a query to the SQL database
-
-        res.status(200).type('html').send(template); // <-- you may need to change this
+        if(err){
+            res.status(404).send('File not found');
+        } else {
+            res.status(200).type('html').send('state.html'); // <-- you may need to change this
+        }
+        
     });
 });
 
