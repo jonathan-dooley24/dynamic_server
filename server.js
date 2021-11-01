@@ -55,7 +55,7 @@ app.get('/state/:selected_state', (req, res) => {
         if(err){
             res.status(404).send("File not found");
         } else {
-            
+            res.status(200).type('html').send('state.html'); // <-- you may need to change this
         }
         // modify `template` and send response
         // this will require a query to the SQL database
@@ -73,9 +73,9 @@ app.get('/energy/:selected_energy_source', (req, res) => {
         if(err){
             res.status(404).send('File not found');
         } else {
-            res.status(200).type('html').send('state.html'); // <-- you may need to change this
+            res.status(200).type('html').send('energy.html'); // <-- you may need to change this
         }
-        
+
     });
 });
 
