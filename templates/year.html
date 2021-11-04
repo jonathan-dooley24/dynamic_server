@@ -4,8 +4,9 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>US Energy Consumption</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script type="application/javascript">
+    <link rel="stylesheet" href="../public/css/style.css">
+    <link rel="stylesheet" href="../assets/css/foundation.css">
+    <script type="application/javascript" src="../public/functions.js">
         // `year` and total counts for entire US => set these variables equal to appropriate value
         //   * these variables will be defined and accessible from any script loaded after this one
         var year = {{{YEAR}}};
@@ -17,7 +18,26 @@
     </script>
 </head>
 <body>
-    <!-- create template here -->
-    <h1>year: {{{CONTENT HERE}}}</h1>
+    <div class="top-menu">
+        <div class="website-name text-center">
+            <h1>Energy Consumption</h1>
+        </div>
+        <div class="navigation">
+            <ul class="menu align-center">
+                <li>
+                    <h2><a onclick="handleStateClick()" target="_self">State</a></h2>
+                </li>
+                <li>
+                    <h2><a onclick="handleYearClick()" target="_self">Year</a></h2>
+                </li>
+                <li>
+                    <h2><a onclick="handleEnergyClick()" target="_self">Energy</a></h2>
+                </li>
+              </ul>
+        </div>
+    </div>
+    <div class="content">
+year
+    </div>
 </body>
 </html>
