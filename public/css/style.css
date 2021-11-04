@@ -1,1 +1,8 @@
 /* Custom CSS Rules */
+.top-menu{
+    background-color: navy;
+    color: white;
+}
+.top-menu a{
+    color: white;
+}
