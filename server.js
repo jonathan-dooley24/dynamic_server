@@ -5,7 +5,7 @@ let path = require('path');
 // NPM modules
 let express = require('express');
 let sqlite3 = require('sqlite3');
-
+const { send } = require('process');
 
 let public_dir = path.join(__dirname, 'public');
 let template_dir = path.join(__dirname, 'templates');
@@ -33,49 +33,95 @@ app.get('/', (req, res) => {
     res.redirect('/year/2018');
 });
 
-// GET request handler for '/year/*'
+// GET request handler for '/year/*'   ENERGY CONSUMPTION BY YEAR
 app.get('/year/:selected_year', (req, res) => {
-    console.log(req.params.selected_year);
-    fs.readFile(path.join(template_dir, 'year.html'), (err, template) => {
+    fs.readFile(path.join(template_dir, 'year.html'), 'utf-8', (err, template) => {
         if(err){
             res.status(404).send("File not found");
-        } else {
-            res.status(200).type('html').send('year.html'); // <-- you may need to change this
-
+        } 
+        else {
+            let response = template.replace('{{{YEAR}}}', req.params.selected_year);
+            db.all('SELECT * FROM Consumption INNER JOIN States ON Consumption.state_abbreviation = States.state_abbreviation WHERE year = ?', [req.params.selected_year], (err, rows) => {
+                if(err){
+                    res.status(404).send("Error: Unable to gather data");
+                }
+                else{
+                    if(rows.length ==0){
+                        res.status(404).type('html').send('Error: No data for year: ' + req.params.selected_year);
+                    }
+                    else{
+                        let strSoFar = '';
+                        rows.forEach(row => {
+                            strSoFar += JSON.stringify(row);
+                        });
+                        response = response.replace('{{{CONTENT HERE}}}', strSoFar);
+                        res.status(200).type('html').send(response);
+                    }
+                }
+            });
         }
-
-        
     });
 });
 
-// GET request handler for '/state/*'
+// GET request handler for '/state/*' ENERGY CONSUMPTION BY STATE
 app.get('/state/:selected_state', (req, res) => {
     console.log(req.params.selected_state);
-    fs.readFile(path.join(template_dir, 'state.html'), (err, template) => {
+    fs.readFile(path.join(template_dir, 'state.html'),'utf-8', (err, template) => {
         if(err){
             res.status(404).send("File not found");
-        } else {
-            res.status(200).type('html').send('state.html'); // <-- you may need to change this
+        } 
+        else {
+            db.all('SELECT * FROM Consumption INNER JOIN States ON Consumption.state_abbreviation = States.state_abbreviation WHERE Consumption.state_abbreviation = ?', [req.params.selected_state], (err, rows) => {
+                if(err){
+                    res.status(404).send("Error: Unable to gather data");
+                }
+                else{
+                    if(rows.length ==0){
+                        res.status(404).type('html').send('Error: No data for state: ' + req.params.selected_state);
+                    }
+                    else{
+                        let strSoFar = '';
+                        rows.forEach(row => {
+                            strSoFar += JSON.stringify(row);
+                        });
+                        res.status(200).type('html').send(strSoFar);
+                    }
+                }
+            });
         }
         // modify `template` and send response
         // this will require a query to the SQL database
-
-        
     });
 });
 
-// GET request handler for '/energy/*'
+// GET request handler for '/energy/*' ENERGY SOURCE PAGE
 app.get('/energy/:selected_energy_source', (req, res) => {
-    console.log(req.params.selected_energy_source);
-    fs.readFile(path.join(template_dir, 'energy.html'), (err, template) => {
+    let energySources = ['coal', 'natural_gas', 'nuclear', 'petroleum', 'renewable'];
+    fs.readFile(path.join(template_dir, 'energy.html'), 'utf-8', (err, template) => {
         // modify `template` and send response
         // this will require a query to the SQL database
         if(err){
             res.status(404).send('File not found');
-        } else {
-            res.status(200).type('html').send('energy.html'); // <-- you may need to change this
         }
-
+        else {
+            if(!energySources.includes(req.params.selected_energy_source)){
+                res.status(404).send('Error: no energy source by name: ' + req.params.selected_energy_source);
+            }
+            else{
+                db.all('SELECT Consumption.year, Consumption.state_abbreviation, Consumption.' + req.params.selected_energy_source + ', States.state_name FROM Consumption INNER JOIN States ON Consumption.state_abbreviation = States.state_abbreviation', (err, rows) => {
+                    if(err){
+                        res.status(404).send('Error: Query Invalid.');
+                    }
+                    else{
+                        let strSoFar = '';
+                        rows.forEach(row => {
+                            strSoFar += JSON.stringify(row);
+                        });
+                        res.status(200).type('html').send(strSoFar);
+                    }
+                });
+            }
+        }
     });
 });
 
