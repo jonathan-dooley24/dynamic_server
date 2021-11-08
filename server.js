@@ -40,7 +40,7 @@ app.get('/year/:selected_year', (req, res) => {
             res.status(404).send("File not found");
         } 
         else {
-            let response = template.replace('{{{YEAR}}}', req.params.selected_year);
+            let response = template.replace('{{{YEAR_HEADER}}}', req.params.selected_year);
             db.all('SELECT * FROM Consumption INNER JOIN States ON Consumption.state_abbreviation = States.state_abbreviation WHERE year = ?', [req.params.selected_year], (err, rows) => {
                 if(err){
                     res.status(404).send("Error: Unable to gather data");
@@ -52,10 +52,29 @@ app.get('/year/:selected_year', (req, res) => {
                     else{
                         let strSoFar = '';
                         rows.forEach(row => {
-                            strSoFar += JSON.stringify(row);
+                            strSoFar += "<tr>"
+                            strSoFar += "<td>" + row.state_abbreviation + "</td>";
+                            strSoFar += "<td>" + row.coal + "</td>";
+                            strSoFar += "<td>" + row.natural_gas + "</td>";
+                            strSoFar += "<td>" + row.petroleum + "</td>";
+                            strSoFar += "<td>" + row.renewable + "</td>";
+                            //strSoFar += "<td>" + row. + "</td>";
+
+                            strSoFar += "</tr>"
+                            //strSoFar += JSON.stringify(row);
                         });
                         response = response.replace('{{{CONTENT HERE}}}', strSoFar);
+                        
+                        
+                        
+                        
+                        
                         res.status(200).type('html').send(response);
+                        // step 1 make the html objects/stuff
+
+
+                        //step 2 populate them with a loop through each year
+                        //
                     }
                 }
             });
@@ -103,7 +122,7 @@ app.get('/energy/:selected_energy_source', (req, res) => {
         if(err){
             res.status(404).send('File not found');
         }
-        else {
+        else { 
             if(!energySources.includes(req.params.selected_energy_source)){
                 res.status(404).send('Error: no energy source by name: ' + req.params.selected_energy_source);
             }

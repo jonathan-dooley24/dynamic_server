@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>US Energy Consumption</title>
-    <link rel="stylesheet" href="../public/css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../assets/css/foundation.css">
     <script type="application/javascript" src="../public/functions.js">
         // `year` and total counts for entire US => set these variables equal to appropriate value
@@ -14,7 +14,7 @@
         var natural_gas_count = {{{NATURAL_GAS_COUNT}}};
         var nuclear_count = {{{NUCLEAR_COUNT}}};
         var petroleum_count = {{{PETROLEUM_COUNT}}};
-        var renewable_count = {{{RENEWABLE_COUNT}}};
+        var renewable_count = {{{RENEWABLE_COUNT}}};   
     </script>
 </head>
 <body>
@@ -36,8 +36,21 @@
               </ul>
         </div>
     </div>
+    <!-- year tables with column -->
     <div class="content">
-year
+        <h1 class="text-center">{{{YEAR_HEADER}}}</h1>
+        <table id="year_table">
+            <tr>
+                <th>State</th>
+                <th>Coal</th>
+                <th>Natural Gas</th>
+                <th>Petroleum</th>
+                <th>Renewable</th>
+                <th>Total</th>
+            </tr>
+            {{{CONTENT HERE}}}
+
+        </table>
     </div>
 </body>
 </html>
