@@ -52,23 +52,19 @@ app.get('/year/:selected_year', (req, res) => {
                     else{
                         let strSoFar = '';
                         rows.forEach(row => {
-                            strSoFar += "<tr>"
+                            strSoFar += "<tr class='text-center'>"
                             strSoFar += "<td>" + row.state_abbreviation + "</td>";
                             strSoFar += "<td>" + row.coal + "</td>";
                             strSoFar += "<td>" + row.natural_gas + "</td>";
                             strSoFar += "<td>" + row.petroleum + "</td>";
                             strSoFar += "<td>" + row.renewable + "</td>";
+                            strSoFar += "<td>" + (row.coal + row.natural_gas + row.petroleum + row.renewable) + "</td";
                             //strSoFar += "<td>" + row. + "</td>";
 
                             strSoFar += "</tr>"
                             //strSoFar += JSON.stringify(row);
                         });
                         response = response.replace('{{{CONTENT HERE}}}', strSoFar);
-                        
-                        
-                        
-                        
-                        
                         res.status(200).type('html').send(response);
                         // step 1 make the html objects/stuff
 
@@ -101,9 +97,21 @@ app.get('/state/:selected_state', (req, res) => {
                     else{
                         let strSoFar = '';
                         rows.forEach(row => {
-                            strSoFar += JSON.stringify(row);
+                            strSoFar += "<tr class='text-center'>";
+                            strSoFar += "<td>" + row.year + "</td>";
+                            strSoFar += "<td>" + row.coal + "</td>";
+                            strSoFar += "<td>" + row.natural_gas + "</td>";
+                            strSoFar += "<td>" + row.nuclear + "</td>";
+                            strSoFar += "<td>" + row.petroleum + "</td>";
+                            strSoFar += "<td>" + row.renewable + "</td>";
+                            strSoFar += "<td>" + row.natural_gas + "</td>";
+                            strSoFar += "<td>" + (row.coal + row.natural_gas + row.nuclear + row.petroleum + row.renewable) + "</td";
+                            strSoFar += "</tr>";
+                            // strSoFar += JSON.stringify(row);
                         });
-                        res.status(200).type('html').send(strSoFar);
+                        let response = template.replace("{{{state}}}" , req.params.selected_state);
+                        response = response.replace('{{{CONTENT HERE}}}', strSoFar);
+                        res.status(200).type('html').send(response);
                     }
                 }
             });
