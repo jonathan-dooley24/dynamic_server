@@ -126,14 +126,14 @@ app.get('/state/:selected_state', (req, res) => {
                             strSoFar += "</tr>";
                             // strSoFar += JSON.stringify(row);
                         });
-                        let response = template.replace("{{{state}}}" , rows[0].state_abbreviation);
+                        let response = template.replace("{{{state}}}" , rows[0].state_name);
                         response = response.replace('{{{CONTENT HERE}}}', strSoFar);
 
                         let next = getNextState(req.params.selected_state);
                         let prev = getPrevState(req.params.selected_state);
-                        response = response.replace("{{{NEXT STATE}}}", next.abbreviation);
+                        response = response.replace("{{{NEXT STATE}}}", next.name);
                         response = response.replace("{{{NEXT ABBR}}}", next.abbreviation);
-                        response = response.replace("{{{PREV STATE}}}", prev.abbreviation);
+                        response = response.replace("{{{PREV STATE}}}", prev.name);
                         response = response.replace("{{{PREV ABBR}}}", prev.abbreviation);
                         res.status(200).type('html').send(response);
                     }
