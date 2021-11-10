@@ -73,6 +73,7 @@ app.get('/year/:selected_year', (req, res) => {
                             strSoFar += "<td>" + row.state_abbreviation + "</td>";
                             strSoFar += "<td>" + row.coal + "</td>";
                             strSoFar += "<td>" + row.natural_gas + "</td>";
+                            strSoFar += "<td>" + row.nuclear +"</td>";
                             strSoFar += "<td>" + row.petroleum + "</td>";
                             strSoFar += "<td>" + row.renewable + "</td>";
                             strSoFar += "<td>" + (row.coal + row.natural_gas + row.petroleum + row.renewable) + "</td";
@@ -125,14 +126,14 @@ app.get('/state/:selected_state', (req, res) => {
                             strSoFar += "</tr>";
                             // strSoFar += JSON.stringify(row);
                         });
-                        let response = template.replace("{{{state}}}" , rows[0].state_name);
+                        let response = template.replace("{{{state}}}" , rows[0].state_abbreviation);
                         response = response.replace('{{{CONTENT HERE}}}', strSoFar);
 
                         let next = getNextState(req.params.selected_state);
                         let prev = getPrevState(req.params.selected_state);
-                        response = response.replace("{{{NEXT STATE}}}", next.name);
+                        response = response.replace("{{{NEXT STATE}}}", next.abbreviation);
                         response = response.replace("{{{NEXT ABBR}}}", next.abbreviation);
-                        response = response.replace("{{{PREV STATE}}}", prev.name);
+                        response = response.replace("{{{PREV STATE}}}", prev.abbreviation);
                         response = response.replace("{{{PREV ABBR}}}", prev.abbreviation);
                         res.status(200).type('html').send(response);
                     }
