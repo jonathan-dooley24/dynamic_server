@@ -112,6 +112,11 @@ app.get('/state/:selected_state', (req, res) => {
                         res.status(404).type('html').send('Error: No data for state: ' + req.params.selected_state);
                     }
                     else{
+                        let coalCounts = '[';
+                        let naturalGasCounts = '[';
+                        let nuclearCounts ='[';
+                        let petroleumCounts = '[';  
+                        let renewableCounts = '[';
                         let strSoFar = '';  
                         rows.forEach(row => {
                             strSoFar += "<tr class='text-center'>";
@@ -125,8 +130,29 @@ app.get('/state/:selected_state', (req, res) => {
                             strSoFar += "<td>" + (row.coal + row.natural_gas + row.nuclear + row.petroleum + row.renewable) + "</td";
                             strSoFar += "</tr>";
                             // strSoFar += JSON.stringify(row);
+                            coalCounts += row.coal +', ';
+                            naturalGasCounts += row.natural_gas+', ';
+                            nuclearCounts += row.nuclear +', ';
+                            petroleumCounts += row.petroleum +', ';
+                            renewableCounts += row.renewable +', ';
                         });
                         let response = template.replace("{{{state}}}" , rows[0].state_name);
+                        coalCounts = coalCounts.slice(0, coalCounts.length-2);
+                        coalCounts = coalCounts + ']';
+                        naturalGasCounts = naturalGasCounts.slice(0, naturalGasCounts.length-2);
+                        naturalGasCounts = naturalGasCounts + ']';
+                        nuclearCounts = nuclearCounts.slice(0, nuclearCounts.length-2);
+                        nuclearCounts = nuclearCounts + ']';
+                        petroleumCounts = petroleumCounts.slice(0, petroleumCounts.length-2);
+                        petroleumCounts = petroleumCounts + ']';
+                        renewableCounts = renewableCounts.slice(0, renewableCounts.length-2);
+                        renewableCounts = renewableCounts + ']';
+                        let response = template.replace("{{{state}}}" , rows[0].state_abbreviation);
+                        response = response.replace("{{{COAL_COUNTS}}}", coalCounts);
+                        response = response.replace("{{{NATURAL_GAS_COUNTS}}}", naturalGasCounts);
+                        response = response.replace("{{{NUCLEAR_COUNTS}}}", nuclearCounts);
+                        response = response.replace("{{{PETROLEUM_COUNTS}}}", petroleumCounts);
+                        response = response.replace("{{{RENEWABLE_COUNTS}}}", renewableCounts);
                         response = response.replace('{{{CONTENT HERE}}}', strSoFar);
 
                         let next = getNextState(req.params.selected_state);
