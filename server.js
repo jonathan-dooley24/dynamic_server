@@ -50,6 +50,23 @@ app.get('/year/:selected_year', (req, res) => {
                         res.status(404).type('html').send('Error: No data for year: ' + req.params.selected_year);
                     }
                     else{
+                        if(req.params.selected_year == '2018'){
+                            response = response.replace('{{{NEXT YEAR}}}', '1960');
+                            response = response.replace('{{{NEXT_YEAR}}}', '1960');
+                        }
+                        else{
+                            response = response.replace('{{{NEXT YEAR}}}', parseInt(req.params.selected_year) + 1);
+                            response = response.replace('{{{NEXT_YEAR}}}', parseInt(req.params.selected_year) + 1);
+                        }
+
+                        if(req.params.selected_year == '1960'){
+                            response = response.replace('{{{PREV YEAR}}}', '2018');
+                            response = response.replace('{{{PREV_YEAR}}}', '2018');
+                        }
+                        else{
+                            response = response.replace('{{{PREV YEAR}}}', parseInt(req.params.selected_year) - 1);
+                            response = response.replace('{{{PREV_YEAR}}}', parseInt(req.params.selected_year) - 1);
+                        }
                         let strSoFar = '';
                         rows.forEach(row => {
                             strSoFar += "<tr class='text-center'>"
@@ -80,7 +97,6 @@ app.get('/year/:selected_year', (req, res) => {
 
 // GET request handler for '/state/*' ENERGY CONSUMPTION BY STATE
 app.get('/state/:selected_state', (req, res) => {
-    console.log(req.params.selected_state);
     fs.readFile(path.join(template_dir, 'state.html'),'utf-8', (err, template) => {
         if(err){
             res.status(404).send("File not found");
@@ -95,7 +111,7 @@ app.get('/state/:selected_state', (req, res) => {
                         res.status(404).type('html').send('Error: No data for state: ' + req.params.selected_state);
                     }
                     else{
-                        let strSoFar = '';
+                        let strSoFar = '';  
                         rows.forEach(row => {
                             strSoFar += "<tr class='text-center'>";
                             strSoFar += "<td>" + row.year + "</td>";
@@ -109,8 +125,15 @@ app.get('/state/:selected_state', (req, res) => {
                             strSoFar += "</tr>";
                             // strSoFar += JSON.stringify(row);
                         });
-                        let response = template.replace("{{{state}}}" , req.params.selected_state);
+                        let response = template.replace("{{{state}}}" , rows[0].state_name);
                         response = response.replace('{{{CONTENT HERE}}}', strSoFar);
+
+                        let next = getNextState(req.params.selected_state);
+                        let prev = getPrevState(req.params.selected_state);
+                        response = response.replace("{{{NEXT STATE}}}", next.name);
+                        response = response.replace("{{{NEXT ABBR}}}", next.abbreviation);
+                        response = response.replace("{{{PREV STATE}}}", prev.name);
+                        response = response.replace("{{{PREV ABBR}}}", prev.abbreviation);
                         res.status(200).type('html').send(response);
                     }
                 }
@@ -140,17 +163,143 @@ app.get('/energy/:selected_energy_source', (req, res) => {
                         res.status(404).send('Error: Query Invalid.');
                     }
                     else{
+                        let energy = req.params.selected_energy_source[0].toUpperCase() + req.params.selected_energy_source.substring(1);
+                        energy = energy.replace("_"," ");
+                        let response = template.replace('{{{ENERGY}}}', energy);
+
+                        let next = getNextEnergy(req.params.selected_energy_source);
+                        let prev =getPrevEnergy(req.params.selected_energy_source);
+                        response = response.replace('{{{PREV_ENERGY}}}',prev);
+                        prev = prev.replace("_"," ");
+                        response = response.replace('{{{PREV ENERGY}}}',prev[0].toUpperCase() + prev.substring(1));
+                        response = response.replace('{{{NEXT_ENERGY}}}',next);
+                        next = next.replace("_", " ");
+                        response = response.replace('{{{NEXT ENERGY}}}',next[0].toUpperCase() + next.substring(1));
+
                         let strSoFar = '';
                         rows.forEach(row => {
                             strSoFar += JSON.stringify(row);
                         });
-                        res.status(200).type('html').send(strSoFar);
+                        res.status(200).type('html').send(response);
                     }
                 });
             }
         }
     });
 });
+
+let states = [
+    {"name": "Alabama","abbreviation": "AL"},
+    {"name": "Alaska","abbreviation": "AK"},
+    {"name": "Arizona","abbreviation": "AZ"},
+    {"name": "Arkansas","abbreviation": "AR"},
+    {"name": "California","abbreviation": "CA"},
+    {"name": "Colorado","abbreviation": "CO"},
+    {"name": "Connecticut","abbreviation": "CT"},
+    {"name": "Delaware","abbreviation": "DE"},
+    {"name": "District of Columbia", "abbreviation": "DC"},
+    {"name": "Florida","abbreviation": "FL"},
+    {"name": "Georgia","abbreviation": "GA"},
+    {"name": "Hawaii","abbreviation": "HI"},
+    {"name": "Idaho","abbreviation": "ID"},
+    {"name": "Illinois","abbreviation": "IL"},
+    {"name": "Indiana","abbreviation": "IN"},
+    {"name": "Iowa","abbreviation": "IA"},
+    {"name": "Kansas","abbreviation": "KS"},
+    {"name": "Kentucky","abbreviation": "KY"},
+    {"name": "Louisiana","abbreviation": "LA"},
+    {"name": "Maine","abbreviation": "ME"},
+    {"name": "Maryland","abbreviation": "MD"},
+    {"name": "Massachusetts","abbreviation": "MA"},
+    {"name": "Michigan","abbreviation": "MI"},
+    {"name": "Minnesota","abbreviation": "MN"},
+    {"name": "Mississippi","abbreviation": "MS"},
+    {"name": "Missouri","abbreviation": "MO"},
+    {"name": "Montana","abbreviation": "MT"},
+    {"name": "Nebraska","abbreviation": "NE"},
+    {"name": "Nevada","abbreviation": "NV"},
+    {"name": "New Hampshire","abbreviation": "NH"},
+    {"name": "New Jersey","abbreviation": "NJ"},
+    {"name": "New Mexico","abbreviation": "NM"},
+    {"name": "New York","abbreviation": "NY"},
+    {"name": "North Carolina","abbreviation": "NC"},
+    {"name": "North Dakota","abbreviation": "ND"},
+    {"name": "Ohio","abbreviation": "OH"},
+    {"name": "Oklahoma","abbreviation": "OK"},
+    {"name": "Oregon","abbreviation": "OR"},
+    {"name": "Pennsylvania","abbreviation": "PA"},
+    {"name": "Rhode Island","abbreviation": "RI"},
+    {"name": "South Carolina","abbreviation": "SC"},
+    {"name": "South Dakota","abbreviation": "SD"},
+    {"name": "Tennessee","abbreviation": "TN"},
+    {"name": "Texas","abbreviation": "TX"},
+    {"name": "Utah","abbreviation": "UT"},
+    {"name": "Vermont","abbreviation": "VT"},
+    {"name": "Virginia","abbreviation": "VA"},
+    {"name": "Washington","abbreviation": "WA"},
+    {"name": "West Virginia","abbreviation": "WV"},
+    {"name": "Wisconsin","abbreviation": "WI"},
+    {"name": "Wyoming","abbreviation": "WY"}
+];
+
+function getNextState(currState){
+    for(let i = 0; i < states.length; i++){
+        if(states[i].abbreviation === currState){
+            if(i == states.length - 1){
+                return states[0];
+            }
+            else{
+                return states[i+1];
+            }
+        }
+    }
+    return null;
+}
+
+function getPrevState(currState){
+    for(let i = 0; i < states.length; i++){
+        if(states[i].abbreviation === currState){
+            if(i == 0){
+                return states[states.length - 1];
+            }
+            else{
+                return states[i-1];
+            }
+        }
+    }
+    return null;
+}
+
+
+let energy_types = ['coal','natural_gas','nuclear','petroleum','renewable'];
+
+function getNextEnergy(energy){
+    for(let i = 0; i < energy_types.length; i++){
+        if(energy_types[i] == energy){
+            if(i == energy_types.length - 1){
+                return energy_types[0];
+            }
+            else{
+                return energy_types[i+1];
+            }
+        }
+    }
+    return null;
+}
+
+function getPrevEnergy(energy){
+    for(let i = 0; i < energy_types.length; i++){
+        if(energy_types[i] == energy){
+            if(i == 0){
+                return energy_types[energy_types.length-1];
+            }
+            else{
+                return energy_types[i-1];
+            }
+        }
+    }
+    return null;
+}
 
 app.listen(port, () => {
     console.log('Now listening on port ' + port);

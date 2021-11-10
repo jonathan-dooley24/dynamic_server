@@ -4,9 +4,9 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>US Energy Consumption</title>
-    <link rel="stylesheet" href="../public/css/style.css">
-    <link rel="stylesheet" href="../assets/css/foundation.css">
-    <script type="application/javascript" src="../public/functions.js">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/assets/css/foundation.css">
+    <script type="application/javascript" src="/functions.js">
         // `energy_type` and object of consumption per year per state => set these variables equal to appropriate value
         //   * these variables will be defined and accessible from any script loaded after this one
         var energy_type = {{{ENERGY_TYPE}}};
@@ -21,22 +21,210 @@
         <div class="navigation">
             <ul class="menu align-center">
                 <li>
-                    <h2><a onclick="handleStateClick()" target="_self">State</a></h2>
+                    <h2><a data-toggle="stateTop">State</a></h2>
                 </li>
                 <li>
-                    <h2><a onclick="handleYearClick()" target="_self">Year</a></h2>
+                    <h2><a data-toggle="yearTop">Year</a></h2>
                 </li>
                 <li>
-                    <h2><a onclick="handleEnergyClick()" target="_self">Energy</a></h2>
+                    <h2><a data-toggle="energyTop">Energy</a></h2>
                 </li>
-              </ul>
+            </ul>
         </div>
     </div>
-    <div class="content">
-Energy
+    <div class="content off-canvas-wrapper">
+        <div class="off-canvas position-top off-canvas-absolute" id="stateTop" data-off-canvas data-transition="overlap">
+            <button class="close-button" aria-label="Close menu" type="button" data-close>
+                <span aria-hidden="true">&times;</span>
+            </button>
+            
+            <div class="text-center">
+                <div>
+                    <h4>Select A State</h4>
+                </div>
+                <div>
+                    <a href="/state/AL" class="dropLink">Alabama</a>
+                    <a href="/state/AK" class="dropLink">Alaska</a>
+                    <a href="/state/AZ" class="dropLink">Arizona</a>
+                    <a href="/state/AR" class="dropLink">Arkansas</a>
+                    <a href="/state/CA" class="dropLink">California</a>
+                    <a href="/state/CO" class="dropLink">Colorado</a>
+                    <a href="/state/CT" class="dropLink">Connecticut</a>
+                </div>
+                <div>
+                    <a href="/state/DE" class="dropLink">Delaware</a>
+                    <a href="/state/DC" class="dropLink">District of Columbia</a>
+                    <a href="/state/FL" class="dropLink">Florida</a>
+                    <a href="/state/GA" class="dropLink">Georgia</a>
+                    <a href="/state/HI" class="dropLink">Hawaii</a>
+                    <a href="/state/ID" class="dropLink">Idaho</a>
+                    <a href="/state/IL" class="dropLink">Illinois</a>
+                </div>
+                <div>
+                    <a href="/state/IN" class="dropLink">Indiana</a>
+                    <a href="/state/IA" class="dropLink">Iowa</a>
+                    <a href="/state/KS" class="dropLink">Kansas</a>
+                    <a href="/state/KY" class="dropLink">Kentucky</a>
+                    <a href="/state/LA" class="dropLink">Louisiana</a>
+                    <a href="/state/ME" class="dropLink">Maine</a>
+                    <a href="/state/MD" class="dropLink">Maryland</a>
+                </div>
+                <div>
+                    <a href="/state/MA" class="dropLink">Massachusetts</a>
+                    <a href="/state/MI" class="dropLink">Michigan</a>
+                    <a href="/state/MN" class="dropLink">Minnesota</a>
+                    <a href="/state/MS" class="dropLink">Mississippi</a>
+                    <a href="/state/MO" class="dropLink">Missouri</a>
+                    <a href="/state/MT" class="dropLink">Montana</a>
+                    <a href="/state/NE" class="dropLink">Nebraska</a>
+                </div>
+                <div>
+                    <a href="/state/NV" class="dropLink">Nevada</a>
+                    <a href="/state/NH" class="dropLink">New Hampshire</a>
+                    <a href="/state/NJ" class="dropLink">New Jersey</a>
+                    <a href="/state/NM" class="dropLink">New Mexico</a>
+                    <a href="/state/NY" class="dropLink">New York</a>
+                    <a href="/state/NC" class="dropLink">North Carolina</a>
+                </div>
+                    <a href="/state/ND" class="dropLink">North Dakota</a>
+                    <a href="/state/OH" class="dropLink">Ohio</a>
+                    <a href="/state/OK" class="dropLink">Oklahoma</a>
+                    <a href="/state/OR" class="dropLink">Oregon</a>
+                    <a href="/state/PA" class="dropLink">Pennsylvania</a>
+                    <a href="/state/RI" class="dropLink">Rhode Island</a>
+                <div>
+                    <a href="/state/SC" class="dropLink">South Carolina</a>
+                    <a href="/state/SD" class="dropLink">South Dakota</a>
+                    <a href="/state/TN" class="dropLink">Tennessee</a>
+                    <a href="/state/TX" class="dropLink">Texas</a>
+                    <a href="/state/UT" class="dropLink">Utah</a>
+                    <a href="/state/VT" class="dropLink">Vermont</a>
+                    <a href="/state/VA" class="dropLink">Virginia</a>
+                </div>
+                <div>
+                    <a href="/state/WA" class="dropLink">Washington</a>
+                    <a href="/state/WV" class="dropLink">West Virginia</a>
+                    <a href="/state/WI" class="dropLink">Wisconsin</a>
+                    <a href="/state/WY" class="dropLink">Wyoming</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="off-canvas position-top off-canvas-absolute" id="yearTop" data-off-canvas data-transition="overlap">
+            <button class="close-button" aria-label="Close menu" type="button" data-close>
+                <span aria-hidden="true">&times;</span>
+            </button>
+            
+            <div class="text-center">
+                <div>
+                    <h4>Select A Year</h4>
+                </div>
+                <div>
+                    <a href="/year/1960" class="dropLink">1960</a>
+                    <a href="/year/1961" class="dropLink">1961</a>
+                    <a href="/year/1962" class="dropLink">1962</a>
+                    <a href="/year/1963" class="dropLink">1963</a>
+                    <a href="/year/1964" class="dropLink">1964</a>
+                    <a href="/year/1965" class="dropLink">1965</a>
+                    <a href="/year/1966" class="dropLink">1966</a>
+                    <a href="/year/1967" class="dropLink">1967</a>
+                    <a href="/year/1968" class="dropLink">1968</a>
+                    <a href="/year/1969" class="dropLink">1969</a>
+                </div>
+                <div>
+                    <a href="/year/1970" class="dropLink">1970</a>
+                    <a href="/year/1971" class="dropLink">1971</a>
+                    <a href="/year/1972" class="dropLink">1972</a>
+                    <a href="/year/1973" class="dropLink">1973</a>
+                    <a href="/year/1974" class="dropLink">1974</a>
+                    <a href="/year/1975" class="dropLink">1975</a>
+                    <a href="/year/1976" class="dropLink">1976</a>
+                    <a href="/year/1977" class="dropLink">1977</a>
+                    <a href="/year/1978" class="dropLink">1978</a>
+                    <a href="/year/1979" class="dropLink">1979</a>
+                </div>
+                <div>
+                    <a href="/year/1980" class="dropLink">1980</a>
+                    <a href="/year/1981" class="dropLink">1981</a>
+                    <a href="/year/1982" class="dropLink">1982</a>
+                    <a href="/year/1983" class="dropLink">1983</a>
+                    <a href="/year/1984" class="dropLink">1984</a>
+                    <a href="/year/1985" class="dropLink">1985</a>
+                    <a href="/year/1986" class="dropLink">1986</a>
+                    <a href="/year/1987" class="dropLink">1987</a>
+                    <a href="/year/1988" class="dropLink">1988</a>
+                    <a href="/year/1989" class="dropLink">1989</a>
+                </div>
+                <div>
+                    <a href="/year/1990" class="dropLink">1990</a>
+                    <a href="/year/1991" class="dropLink">1991</a>
+                    <a href="/year/1992" class="dropLink">1992</a>
+                    <a href="/year/1993" class="dropLink">1993</a>
+                    <a href="/year/1994" class="dropLink">1994</a>
+                    <a href="/year/1995" class="dropLink">1995</a>
+                    <a href="/year/1996" class="dropLink">1996</a>
+                    <a href="/year/1997" class="dropLink">1997</a>
+                    <a href="/year/1998" class="dropLink">1998</a>
+                    <a href="/year/1999" class="dropLink">1999</a>
+                </div>
+                <div>
+                    <a href="/year/2000" class="dropLink">2000</a>
+                    <a href="/year/2001" class="dropLink">2001</a>
+                    <a href="/year/2002" class="dropLink">2002</a>
+                    <a href="/year/2003" class="dropLink">2003</a>
+                    <a href="/year/2004" class="dropLink">2004</a>
+                    <a href="/year/2005" class="dropLink">2005</a>
+                    <a href="/year/2006" class="dropLink">2006</a>
+                    <a href="/year/2007" class="dropLink">2007</a>
+                    <a href="/year/2008" class="dropLink">2008</a>
+                    <a href="/year/2009" class="dropLink">2009</a>
+                </div>
+                <div>
+                    <a href="/year/2010" class="dropLink">2010</a>
+                    <a href="/year/2011" class="dropLink">2011</a>
+                    <a href="/year/2012" class="dropLink">2012</a>
+                    <a href="/year/2013" class="dropLink">2013</a>
+                    <a href="/year/2014" class="dropLink">2014</a>
+                    <a href="/year/2015" class="dropLink">2015</a>
+                    <a href="/year/2016" class="dropLink">2016</a>
+                    <a href="/year/2017" class="dropLink">2017</a>
+                    <a href="/year/2018" class="dropLink">2018</a>
+                </div>
+            </div>
+        </div>
+        <div class="off-canvas position-top off-canvas-absolute" id="energyTop" data-off-canvas data-transition="overlap">
+            <button class="close-button" aria-label="Close menu" type="button" data-close>
+                <span aria-hidden="true">&times;</span>
+            </button>
+            
+            <ul class="menu vertical">
+                <li><a href="/energy/coal" class="dropLink">Coal</a></li>
+                <li><a href="/energy/natural_gas" class="dropLink">Natural gas</a></li>
+                <li><a href="/energy/nuclear" class="dropLink">Nuclear</a></li>
+                <li><a href="/energy/petroleum" class="dropLink">Petroleum</a></li>
+                <li><a href="/energy/renewable" class="dropLink">Renewable</a></li>
+            </ul>
+        </div>
+        <div class="grid-container">
+            <div class="grid-x grid-padding-x">
+                <div class="cell medium-3">
+                    <h4 class="text-center" style="padding-top: 1rem;"><a href="/energy/{{{PREV_ENERGY}}}">{{{PREV ENERGY}}}</a></h4>
+                </div>
+                <div class="cell medium-6">
+                    <h1 class="text-center">{{{ENERGY}}}</h1>
+                </div>
+                <div class="cell medium-3">
+                    <h4 class="text-center" style="padding-top: 1rem;"><a href="/energy/{{{NEXT_ENERGY}}}">{{{NEXT ENERGY}}}</a></h4>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- <script src="/assets/js/jquery-3.6.0.min.js"></script> -->
+    <script src="/assets/js/vendor.js"></script>
+    <script src="/assets/js/foundation.js"></script>
+    <script type="application/javascript">
+        $(document).foundation();
+    </script>
 </body>
 </html>
-<script>
-    
-</script>
