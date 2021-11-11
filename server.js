@@ -112,8 +112,14 @@ app.get('/state/:selected_state', (req, res) => {
                         res.status(404).type('html').send('Error: No data for state: ' + req.params.selected_state);
                     }
                     else{
+                        let coalCounts = '[';
+                        let naturalGasCounts = '[';
+                        let nuclearCounts ='[';
+                        let petroleumCounts = '[';  
+                        let renewableCounts = '[';
+                        let years = '[';
+                        let strSoFar = '';
                         let strSoFar = ''; 
-                         
                         rows.forEach(row => {
                             strSoFar += "<tr class='text-center'>";
                             strSoFar += "<td>" + row.year + "</td>";
@@ -125,6 +131,34 @@ app.get('/state/:selected_state', (req, res) => {
                             strSoFar += "<td>" + row.natural_gas + "</td>";
                             strSoFar += "<td>" + (row.coal + row.natural_gas + row.nuclear + row.petroleum + row.renewable) + "</td";
                             strSoFar += "</tr>";
+                            //strSoFar += JSON.stringify(row);
+                            coalCounts += (row.coal / (row.coal + row.natural_gas + row.nuclear + row.petroleum + row.renewable))*100 +', ';
+                            naturalGasCounts += (row.natural_gas / (row.coal + row.natural_gas + row.nuclear + row.petroleum + row.renewable))*100+', ';
+                            nuclearCounts += (row.nuclear / (row.coal + row.natural_gas + row.nuclear + row.petroleum + row.renewable))*100 +', ';
+                            petroleumCounts += (row.petroleum / (row.coal + row.natural_gas + row.nuclear + row.petroleum + row.renewable)*100) +', ';
+                            renewableCounts += (row.renewable  / (row.coal + row.natural_gas + row.nuclear + row.petroleum + row.renewable))*100+', ';
+                            years += row.year+', ';
+                        });
+                        let response = template.replace("{{{state}}}" , rows[0].state_name);
+                        coalCounts = coalCounts.slice(0, coalCounts.length-2);
+                        coalCounts = coalCounts + ']';
+                        naturalGasCounts = naturalGasCounts.slice(0, naturalGasCounts.length-2);
+                        naturalGasCounts = naturalGasCounts + ']';
+                        nuclearCounts = nuclearCounts.slice(0, nuclearCounts.length-2);
+                        nuclearCounts = nuclearCounts + ']';
+                        petroleumCounts = petroleumCounts.slice(0, petroleumCounts.length-2);
+                        petroleumCounts = petroleumCounts + ']';
+                        renewableCounts = renewableCounts.slice(0, renewableCounts.length-2);
+                        renewableCounts = renewableCounts + ']';
+                        years = years.slice(0, years.length-2);
+                        years = years + ']';
+                        response = response.replace("{{{state}}}" , rows[0].state_abbreviation);
+                        response = response.replace("{{{COAL_COUNTS}}}", coalCounts);
+                        response = response.replace("{{{YEARS}}}", years);
+                        response = response.replace("{{{NATURAL_GAS_COUNTS}}}", naturalGasCounts);
+                        response = response.replace("{{{NUCLEAR_COUNTS}}}", nuclearCounts);
+                        response = response.replace("{{{PETROLEUM_COUNTS}}}", petroleumCounts);
+                        response = response.replace("{{{RENEWABLE_COUNTS}}}", renewableCounts);
                         });
                         let response = template.replace("{{{state}}}" , rows[0].state_name);
                         response = response.replace('{{{STATE_NAME}}}', rows[0].state_name);
