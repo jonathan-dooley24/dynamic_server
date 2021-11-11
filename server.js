@@ -14,6 +14,60 @@ let db_filename = path.join(__dirname, 'db', 'usenergy.sqlite3');
 let app = express();
 let port = 8000;
 
+let states = [
+    {"name": "Alabama","abbreviation": "AL"},
+    {"name": "Alaska","abbreviation": "AK"},
+    {"name": "Arizona","abbreviation": "AZ"},
+    {"name": "Arkansas","abbreviation": "AR"},
+    {"name": "California","abbreviation": "CA"},
+    {"name": "Colorado","abbreviation": "CO"},
+    {"name": "Connecticut","abbreviation": "CT"},
+    {"name": "District of Columbia", "abbreviation": "DC"},
+    {"name": "Delaware","abbreviation": "DE"},
+    {"name": "Florida","abbreviation": "FL"},
+    {"name": "Georgia","abbreviation": "GA"},
+    {"name": "Hawaii","abbreviation": "HI"},
+    {"name": "Idaho","abbreviation": "ID"},
+    {"name": "Illinois","abbreviation": "IL"},
+    {"name": "Indiana","abbreviation": "IN"},
+    {"name": "Iowa","abbreviation": "IA"},
+    {"name": "Kansas","abbreviation": "KS"},
+    {"name": "Kentucky","abbreviation": "KY"},
+    {"name": "Louisiana","abbreviation": "LA"},
+    {"name": "Maine","abbreviation": "ME"},
+    {"name": "Maryland","abbreviation": "MD"},
+    {"name": "Massachusetts","abbreviation": "MA"},
+    {"name": "Michigan","abbreviation": "MI"},
+    {"name": "Minnesota","abbreviation": "MN"},
+    {"name": "Mississippi","abbreviation": "MS"},
+    {"name": "Missouri","abbreviation": "MO"},
+    {"name": "Montana","abbreviation": "MT"},
+    {"name": "Nebraska","abbreviation": "NE"},
+    {"name": "Nevada","abbreviation": "NV"},
+    {"name": "New Hampshire","abbreviation": "NH"},
+    {"name": "New Jersey","abbreviation": "NJ"},
+    {"name": "New Mexico","abbreviation": "NM"},
+    {"name": "New York","abbreviation": "NY"},
+    {"name": "North Carolina","abbreviation": "NC"},
+    {"name": "North Dakota","abbreviation": "ND"},
+    {"name": "Ohio","abbreviation": "OH"},
+    {"name": "Oklahoma","abbreviation": "OK"},
+    {"name": "Oregon","abbreviation": "OR"},
+    {"name": "Pennsylvania","abbreviation": "PA"},
+    {"name": "Rhode Island","abbreviation": "RI"},
+    {"name": "South Carolina","abbreviation": "SC"},
+    {"name": "South Dakota","abbreviation": "SD"},
+    {"name": "Tennessee","abbreviation": "TN"},
+    {"name": "Texas","abbreviation": "TX"},
+    {"name": "Utah","abbreviation": "UT"},
+    {"name": "Vermont","abbreviation": "VT"},
+    {"name": "Virginia","abbreviation": "VA"},
+    {"name": "Washington","abbreviation": "WA"},
+    {"name": "West Virginia","abbreviation": "WV"},
+    {"name": "Wisconsin","abbreviation": "WI"},
+    {"name": "Wyoming","abbreviation": "WY"}
+];
+
 // Open usenergy.sqlite3 database
 let db = new sqlite3.Database(db_filename, sqlite3.OPEN_READONLY, (err) => {
     if (err) {
@@ -211,6 +265,7 @@ app.get('/energy/:selected_energy_source', (req, res) => {
                         let energy = req.params.selected_energy_source[0].toUpperCase() + req.params.selected_energy_source.substring(1);
                         energy = energy.replace("_"," ");
                         let response = template.replace('{{{ENERGY}}}', energy);
+                        response = response.replace('{{{ENERGY_TYPE}}}',"\'" + energy + "\'");
                         response = response.replace('{{{ENERGY TYPE}}}',req.params.selected_energy_source);
                         response = response.replace('{{{ALT_TYPE}}}', energy);
 
@@ -229,10 +284,62 @@ app.get('/energy/:selected_energy_source', (req, res) => {
                         this makes the for each loop tricky because we really want to start a new row after each year followed by the 51 
                         states' values for the specified energy source. Using a counter to keep track.
                         */
-                        
+
+                        let stateYearData = {
+                            AL: new Array(59),
+                            AK: new Array(59),
+                            AZ: new Array(59),
+                            AR: new Array(59),
+                            CA: new Array(59),
+                            CO: new Array(59),
+                            CT: new Array(59),
+                            DE: new Array(59),
+                            DC: new Array(59),
+                            FL: new Array(59),
+                            GA: new Array(59),
+                            HI: new Array(59),
+                            ID: new Array(59),
+                            IL: new Array(59),
+                            IN: new Array(59),
+                            IA: new Array(59),
+                            KS: new Array(59),
+                            KY: new Array(59),
+                            LA: new Array(59),
+                            ME: new Array(59),
+                            MD: new Array(59),
+                            MA: new Array(59),
+                            MI: new Array(59),
+                            MN: new Array(59),
+                            MS: new Array(59),
+                            MO: new Array(59),
+                            MT: new Array(59),
+                            NE: new Array(59),
+                            NV: new Array(59),
+                            NH: new Array(59),
+                            NJ: new Array(59),
+                            NM: new Array(59),
+                            NY: new Array(59),
+                            NC: new Array(59),
+                            ND: new Array(59),
+                            OH: new Array(59),
+                            OK: new Array(59),
+                            OR: new Array(59),
+                            PA: new Array(59),
+                            RI: new Array(59),
+                            SC: new Array(59),
+                            SD: new Array(59),
+                            TN: new Array(59),
+                            TX: new Array(59),
+                            UT: new Array(59),
+                            VT: new Array(59),
+                            VA: new Array(59),
+                            WA: new Array(59),
+                            WV: new Array(59),
+                            WI: new Array(59),
+                            WY: new Array(59) 
+                        }
                         var counter = 0;
-                        rows.forEach(row => {
-                            
+                        rows.forEach(row => { 
                             if((counter % 51) == 0){
                                 strSoFar += "</tr>";
                             }
@@ -240,29 +347,34 @@ app.get('/energy/:selected_energy_source', (req, res) => {
                                 strSoFar += "<tr class='text-center'>";
                                 strSoFar += "<td>" + row.year + "</td>";
                             }
-                            //
                             if(req.params.selected_energy_source == 'coal'){
                                 strSoFar += "<td>" + row.coal + "</td>";
+                                stateYearData[row.state_abbreviation][parseInt(row.year)-1960] = parseInt(row.coal);
                             }
                             if(req.params.selected_energy_source == 'natural_gas'){
                                 strSoFar += "<td>" + row.natural_gas + "</td>";
+                                stateYearData[row.state_abbreviation][parseInt(row.year)-1960] = parseInt(row.natural_gas);
                             }
                             if(req.params.selected_energy_source == 'nuclear'){
                                 strSoFar += "<td>" + row.nuclear + "</td>";
+                                stateYearData[row.state_abbreviation][parseInt(row.year)-1960] = parseInt(row.nuclear);
                             }
                             if(req.params.selected_energy_source == 'petroleum'){
                                 strSoFar += "<td>" + row.petroleum + "</td>";
+                                stateYearData[row.state_abbreviation][parseInt(row.year)-1960] = parseInt(row.petroleum);
                             }
                             if(req.params.selected_energy_source == 'renewable'){
                                 strSoFar += "<td>" + row.renewable + "</td>";
+                                stateYearData[row.state_abbreviation][parseInt(row.year)-1960] = parseInt(row.renewable);
                             }
-                            //strSoFar += "<td>" + row.selected + "</td>";
                             
                             
                             counter++;
-                           //strSoFar += JSON.stringify(row);
                         });
+
+                        response = response.replace('{{{ENERGY_COUNTS}}}', JSON.stringify(stateYearData));
                         response = response.replace('{{{CONTENT HERE}}}', strSoFar);
+                        response = response.replace('{{{CHART ENERGY}}}', energy);
                         res.status(200).type('html').send(response);
                     }
                 });
@@ -271,59 +383,7 @@ app.get('/energy/:selected_energy_source', (req, res) => {
     });
 });
 
-let states = [
-    {"name": "Alabama","abbreviation": "AL"},
-    {"name": "Alaska","abbreviation": "AK"},
-    {"name": "Arizona","abbreviation": "AZ"},
-    {"name": "Arkansas","abbreviation": "AR"},
-    {"name": "California","abbreviation": "CA"},
-    {"name": "Colorado","abbreviation": "CO"},
-    {"name": "Connecticut","abbreviation": "CT"},
-    {"name": "Delaware","abbreviation": "DE"},
-    {"name": "District of Columbia", "abbreviation": "DC"},
-    {"name": "Florida","abbreviation": "FL"},
-    {"name": "Georgia","abbreviation": "GA"},
-    {"name": "Hawaii","abbreviation": "HI"},
-    {"name": "Idaho","abbreviation": "ID"},
-    {"name": "Illinois","abbreviation": "IL"},
-    {"name": "Indiana","abbreviation": "IN"},
-    {"name": "Iowa","abbreviation": "IA"},
-    {"name": "Kansas","abbreviation": "KS"},
-    {"name": "Kentucky","abbreviation": "KY"},
-    {"name": "Louisiana","abbreviation": "LA"},
-    {"name": "Maine","abbreviation": "ME"},
-    {"name": "Maryland","abbreviation": "MD"},
-    {"name": "Massachusetts","abbreviation": "MA"},
-    {"name": "Michigan","abbreviation": "MI"},
-    {"name": "Minnesota","abbreviation": "MN"},
-    {"name": "Mississippi","abbreviation": "MS"},
-    {"name": "Missouri","abbreviation": "MO"},
-    {"name": "Montana","abbreviation": "MT"},
-    {"name": "Nebraska","abbreviation": "NE"},
-    {"name": "Nevada","abbreviation": "NV"},
-    {"name": "New Hampshire","abbreviation": "NH"},
-    {"name": "New Jersey","abbreviation": "NJ"},
-    {"name": "New Mexico","abbreviation": "NM"},
-    {"name": "New York","abbreviation": "NY"},
-    {"name": "North Carolina","abbreviation": "NC"},
-    {"name": "North Dakota","abbreviation": "ND"},
-    {"name": "Ohio","abbreviation": "OH"},
-    {"name": "Oklahoma","abbreviation": "OK"},
-    {"name": "Oregon","abbreviation": "OR"},
-    {"name": "Pennsylvania","abbreviation": "PA"},
-    {"name": "Rhode Island","abbreviation": "RI"},
-    {"name": "South Carolina","abbreviation": "SC"},
-    {"name": "South Dakota","abbreviation": "SD"},
-    {"name": "Tennessee","abbreviation": "TN"},
-    {"name": "Texas","abbreviation": "TX"},
-    {"name": "Utah","abbreviation": "UT"},
-    {"name": "Vermont","abbreviation": "VT"},
-    {"name": "Virginia","abbreviation": "VA"},
-    {"name": "Washington","abbreviation": "WA"},
-    {"name": "West Virginia","abbreviation": "WV"},
-    {"name": "Wisconsin","abbreviation": "WI"},
-    {"name": "Wyoming","abbreviation": "WY"}
-];
+
 
 function getNextState(currState){
     for(let i = 0; i < states.length; i++){

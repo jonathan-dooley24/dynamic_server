@@ -6,6 +6,7 @@
     <title>US Energy Consumption</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/assets/css/foundation.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="application/javascript">
         // `energy_type` and object of consumption per year per state => set these variables equal to appropriate value
         //   * these variables will be defined and accessible from any script loaded after this one
@@ -223,65 +224,384 @@
             <img src="/img/{{{ENERGY TYPE}}}.png" alt="{{{ALT_TYPE}}} Picture">
         </div>
 
-    <div style="overflow-x: auto;">
-        <table>
-            <tr>
-                <th>Year</th>
-                <th>AK</th>
-                <th>AL</th>
-                <th>AR</th>
-                <th>AZ</th>
-                <th>CA</th>
-                <th>CO</th>
-                <th>CT</th>
-                <th>DC</th>
-                <th>DE</th>
-                <th>FL</th>
-                <th>GA</th>
-                <th>HI</th>
-                <th>IA</th>
-                <th>ID</th>
-                <th>IL</th>
-                <th>IN</th>
-                <th>KS</th>
-                <th>KY</th>
-                <th>LA</th>
-                <th>MA</th>
-                <th>MD</th>
-                <th>ME</th>
-                <th>MI</th>
-                <th>MN</th>
-                <th>MO</th>
-                <th>MS</th>
-                <th>MT</th>
-                <th>NC</th>
-                <th>ND</th>
-                <th>NE</th>
-                <th>NH</th>
-                <th>NJ</th>
-                <th>NM</th>
-                <th>NV</th>
-                <th>NY</th>
-                <th>OH</th>
-                <th>OK</th>
-                <th>OR</th>
-                <th>PA</th>
-                <th>RI</th>
-                <th>SC</th>
-                <th>SD</th>
-                <th>TN</th>
-                <th>TX</th>
-                <th>UT</th>
-                <th>VT</th>
-                <th>VA</th>
-                <th>WA</th>
-                <th>WI</th>
-                <th>WV</th>
-                <th>WY</th>
-            </tr>
-            {{{CONTENT HERE}}}
-        </table>
-    </div>
+        <div style="overflow-x: auto;">
+            <table>
+                <tr>
+                    <th>Year</th>
+                    <th>AK</th>
+                    <th>AL</th>
+                    <th>AR</th>
+                    <th>AZ</th>
+                    <th>CA</th>
+                    <th>CO</th>
+                    <th>CT</th>
+                    <th>DC</th>
+                    <th>DE</th>
+                    <th>FL</th>
+                    <th>GA</th>
+                    <th>HI</th>
+                    <th>IA</th>
+                    <th>ID</th>
+                    <th>IL</th>
+                    <th>IN</th>
+                    <th>KS</th>
+                    <th>KY</th>
+                    <th>LA</th>
+                    <th>MA</th>
+                    <th>MD</th>
+                    <th>ME</th>
+                    <th>MI</th>
+                    <th>MN</th>
+                    <th>MO</th>
+                    <th>MS</th>
+                    <th>MT</th>
+                    <th>NC</th>
+                    <th>ND</th>
+                    <th>NE</th>
+                    <th>NH</th>
+                    <th>NJ</th>
+                    <th>NM</th>
+                    <th>NV</th>
+                    <th>NY</th>
+                    <th>OH</th>
+                    <th>OK</th>
+                    <th>OR</th>
+                    <th>PA</th>
+                    <th>RI</th>
+                    <th>SC</th>
+                    <th>SD</th>
+                    <th>TN</th>
+                    <th>TX</th>
+                    <th>UT</th>
+                    <th>VT</th>
+                    <th>VA</th>
+                    <th>WA</th>
+                    <th>WI</th>
+                    <th>WV</th>
+                    <th>WY</th>
+                </tr>
+                {{{CONTENT HERE}}}
+            </table>    
+        </div>
+
+        <div style="overflow-x: auto;">
+            <div class="text-center" style="width: 1000px;"><h5>State {{{CHART ENERGY}}} Consumption Per Year</h5></div>
+            <div style="height: 500px; width: 1000px;">
+                <canvas id="energyChart"></canvas>
+            </div>
+        </div>
+
+        <script>
+            let labels = [];
+            for(let i = 0; i < 60; i++){
+                labels.push(1960+i);
+            }
+            new Chart(document.getElementById('energyChart'),{
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: energy_counts["AL"],
+                        label: "AL",
+                        borderColor: "#526e9c",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["AK"],
+                        label: "AK",
+                        borderColor: "#1e1533",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["AZ"],
+                        label: "AZ",
+                        borderColor: "#86368f",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["AR"],
+                        label: "AR",
+                        borderColor: "#be71c7",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["CO"],
+                        label: "CO",
+                        borderColor: "#a2ba99",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["CT"],
+                        label: "CT",
+                        borderColor: "#8eed6b",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["DE"],
+                        label: "DE",
+                        borderColor: "#238001",
+                        fill: false
+                    },{
+                        data: energy_counts["DC"],
+                        label: "DC",
+                        borderColor: "#dedba6",
+                        fill: false
+                    }
+                    ,{
+                        data: energy_counts["FL"],
+                        label: "FL",
+                        borderColor: "#f0e632",
+                        fill: false
+                    }
+                    ,{
+                        data: energy_counts["GA"],
+                        label: "GA",
+                        borderColor: "#f7d697",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["HI"],
+                        label: "HI",
+                        borderColor: "#eda51c",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["ID"],
+                        label: "ID",
+                        borderColor: "#694605",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["IL"],
+                        label: "IL",
+                        borderColor: "#f0baa5",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["IN"],
+                        label: "IN",
+                        borderColor: "#fc6f38",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["IA"],
+                        label: "IA",
+                        borderColor: "#91300a",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["KS"],
+                        label: "KS",
+                        borderColor: "#ff0d00",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["KY"],
+                        label: "KY",
+                        borderColor: "#f06583",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["LA"],
+                        label: "LA",
+                        borderColor: "#ccb1b7",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["ME"],
+                        label: "ME",
+                        borderColor: "#d47288",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["MD"],
+                        label: "MD",
+                        borderColor: "#943b4f",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["MA"],
+                        label: "MA",
+                        borderColor: "#5c1424",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["MI"],
+                        label: "MI",
+                        borderColor: "#d95b9e",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["MN"],
+                        label: "MN",
+                        borderColor: "#d62282",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["MS"],
+                        label: "MS",
+                        borderColor: "#5c0533",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["MO"],
+                        label: "MO",
+                        borderColor: "#5e3e4f",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["MT"],
+                        label: "MT",
+                        borderColor: "#8c3479",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["NE"],
+                        label: "NE",
+                        borderColor: "#cd99f2",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["NV"],
+                        label: "NV",
+                        borderColor: "#a12cf5",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["NH"],
+                        label: "NH",
+                        borderColor: "#531480",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["NJ"],
+                        label: "NJ",
+                        borderColor: "#67477d",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["NM"],
+                        label: "NM",
+                        borderColor: "#556ce0",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["NY"],
+                        label: "NY",
+                        borderColor: "#122582",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["NC"],
+                        label: "NC",
+                        borderColor: "#393f59",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["ND"],
+                        label: "ND",
+                        borderColor: "#3e95cd",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["OH"],
+                        label: "OH",
+                        borderColor: "#51cff5",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["OK"],
+                        label: "OK",
+                        borderColor: "#0abcf2",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["OR"],
+                        label: "OR",
+                        borderColor: "#07485c",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["PA"],
+                        label: "PA",
+                        borderColor: "#09e3a9",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["RI"],
+                        label: "RI",
+                        borderColor: "#99f7de",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["SC"],
+                        label: "SC",
+                        borderColor: "#055943",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["SD"],
+                        label: "SD",
+                        borderColor: "#29e32f",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["TN"],
+                        label: "TN",
+                        borderColor: "#138a17",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["TX"],
+                        label: "TX",
+                        borderColor: "#7bc97e",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["UT"],
+                        label: "UT",
+                        borderColor: "#b7eb0c",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["VT"],
+                        label: "VT",
+                        borderColor: "#405207",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["VA"],
+                        label: "VA",
+                        borderColor: "#e6d493",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["WA"],
+                        label: "WA",
+                        borderColor: "#e0b722",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["WV"],
+                        label: "WV",
+                        borderColor: "#e69155",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["WI"],
+                        label: "WI",
+                        borderColor: "#cf5d0c",
+                        fill: false
+                    },
+                    {
+                        data: energy_counts["WY"],
+                        label: "Wy",
+                        borderColor: "#45230c",
+                        fill: false
+                    }]
+                }
+            });
+        </script>
     </div>
 
     <!-- <script src="/assets/js/jquery-3.6.0.min.js"></script> -->
