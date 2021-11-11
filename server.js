@@ -68,27 +68,36 @@ app.get('/year/:selected_year', (req, res) => {
                             response = response.replace('{{{PREV_YEAR}}}', parseInt(req.params.selected_year) - 1);
                         }
                         let strSoFar = '';
+                        let coal_count = 0;
+                        let natural_gas_count = 0;
+                        let nuclear_count = 0;
+                        let petroleum_count = 0;
+                        let renewable_count = 0;
                         rows.forEach(row => {
                             strSoFar += "<tr class='text-center'>"
                             strSoFar += "<td>" + row.state_abbreviation + "</td>";
                             strSoFar += "<td>" + row.coal + "</td>";
+                            coal_count += parseInt(row.coal);
                             strSoFar += "<td>" + row.natural_gas + "</td>";
+                            natural_gas_count += parseInt(row.natural_gas);
                             strSoFar += "<td>" + row.nuclear +"</td>";
+                            nuclear_count += parseInt(row.nuclear);
                             strSoFar += "<td>" + row.petroleum + "</td>";
+                            petroleum_count += parseInt(row.petroleum);
                             strSoFar += "<td>" + row.renewable + "</td>";
+                            renewable_count += parseInt(row.renewable);
                             strSoFar += "<td>" + (row.coal + row.natural_gas + row.petroleum + row.renewable) + "</td";
-                            //strSoFar += "<td>" + row. + "</td>";
-
                             strSoFar += "</tr>"
-                            //strSoFar += JSON.stringify(row);
                         });
+                        response = response.replace('{{{US_YEAR}}}', req.params.selected_year);
+                        response = response.replace('{{{YEAR}}}', req.params.selected_year); 
+                        response = response.replace('{{{COAL_COUNT}}}', coal_count);
+                        response = response.replace('{{{NATURAL_GAS_COUNT}}}',natural_gas_count);
+                        response = response.replace('{{{NUCLEAR_COUNT}}}',nuclear_count);
+                        response = response.replace('{{{PETROLEUM_COUNT}}}',petroleum_count);
+                        response = response.replace('{{{RENEWABLE_COUNT}}}',renewable_count);
                         response = response.replace('{{{CONTENT HERE}}}', strSoFar);
                         res.status(200).type('html').send(response);
-                        // step 1 make the html objects/stuff
-
-
-                        //step 2 populate them with a loop through each year
-                        //
                     }
                 }
             });
@@ -138,7 +147,6 @@ app.get('/state/:selected_state', (req, res) => {
                             renewableCounts += (row.renewable  / (row.coal + row.natural_gas + row.nuclear + row.petroleum + row.renewable))*100+', ';
                             years += row.year+', ';
                         });
-                        let response = template.replace("{{{state}}}" , rows[0].state_name);
                         coalCounts = coalCounts.slice(0, coalCounts.length-2);
                         coalCounts = coalCounts + ']';
                         naturalGasCounts = naturalGasCounts.slice(0, naturalGasCounts.length-2);
@@ -151,15 +159,16 @@ app.get('/state/:selected_state', (req, res) => {
                         renewableCounts = renewableCounts + ']';
                         years = years.slice(0, years.length-2);
                         years = years + ']';
-                        response = response.replace("{{{state}}}" , rows[0].state_abbreviation);
+
+                        let response = template.replace("{{{state}}}" , rows[0].state_name);
+                        response = response.replace('{{{CHART_STATE}}}', rows[0].state_name);
+                        response = response.replace('{{{STATE}}}', "\'" + rows[0].state_name + "\'");
                         response = response.replace("{{{COAL_COUNTS}}}", coalCounts);
                         response = response.replace("{{{YEARS}}}", years);
                         response = response.replace("{{{NATURAL_GAS_COUNTS}}}", naturalGasCounts);
                         response = response.replace("{{{NUCLEAR_COUNTS}}}", nuclearCounts);
                         response = response.replace("{{{PETROLEUM_COUNTS}}}", petroleumCounts);
                         response = response.replace("{{{RENEWABLE_COUNTS}}}", renewableCounts);
-                        
-                        response = response.replace("{{{state}}}" , rows[0].state_name);
                         response = response.replace('{{{STATE_NAME}}}', rows[0].state_name);
                         response = response.replace('{{{STATE NAME}}}', rows[0].state_name.toLowerCase());
                         response = response.replace('{{{CONTENT HERE}}}', strSoFar);

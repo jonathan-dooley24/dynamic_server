@@ -6,7 +6,8 @@
     <title>US Energy Consumption</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../assets/css/foundation.css">
-    <script type="application/javascript" src="/functions.js">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="application/javascript">
         // `year` and total counts for entire US => set these variables equal to appropriate value
         //   * these variables will be defined and accessible from any script loaded after this one
         var year = {{{YEAR}}};
@@ -223,19 +224,43 @@
                 </div>
             </div>
         </div>
-        <table id="year_table">
-            <tr>
-                <th>State</th>
-                <th>Coal</th>
-                <th>Natural Gas</th>
-                <th>Nuclear</th>
-                <th>Petroleum</th>
-                <th>Renewable</th>
-                <th>Total</th>
-            </tr>
-            {{{CONTENT HERE}}}
 
-        </table>
+        <div style="overflow-x: auto;">
+            <table id="year_table">
+                <tr>
+                    <th>State</th>
+                    <th>Coal</th>
+                    <th>Natural Gas</th>
+                    <th>Nuclear</th>
+                    <th>Petroleum</th>
+                    <th>Renewable</th>
+                    <th>Total</th>
+                </tr>
+                {{{CONTENT HERE}}}
+            </table>
+        </div>
+        <div>
+            <div class="text-center" style="width: 375px;">
+                <h5>{{{US_YEAR}}} US Consumption (in billion Btu)</h5>
+            </div>
+            <div style="height:400px; width:375px">
+                <canvas id="yearChart"></canvas>
+            </div>
+        </div>
+
+        <script>
+            new Chart(document.getElementById('yearChart'),{
+                type: 'pie',
+                data: {
+                    labels: ['Coal','Natural gas','Nuclear','Petroleum','Renewable'],
+                    datasets: [{
+                        label: "in billion Btu",
+                        backgroundColor: ["#c43227", "#fae332","#65ed21","#1aedd5","#bc46f2"],
+                        data: [coal_count, natural_gas_count, nuclear_count, petroleum_count, renewable_count]
+                    }],
+                },
+            });
+        </script>
     </div>
 
     <script src="/assets/js/vendor.js"></script>

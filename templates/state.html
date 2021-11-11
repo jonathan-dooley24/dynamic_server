@@ -7,10 +7,16 @@
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/assets/css/foundation.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script type="application/javascript" src="/functions.js">
+    <script type="application/javascript">
         // `state` and arrays of consumption per year => set these variables equal to appropriate value
         //   * these variables will be defined and accessible from any script loaded after this one
         var state = {{{STATE}}};
+        var coal_counts = {{{COAL_COUNTS}}};               // array - value per year (e.g. [1234, 2567, ...])
+        var natural_gas_counts = {{{NATURAL_GAS_COUNTS}}}; // array - value per year (e.g. [1234, 2567, ...])
+        var nuclear_counts = {{{NUCLEAR_COUNTS}}};         // array - value per year (e.g. [1234, 2567, ...])
+        var petroleum_counts = {{{PETROLEUM_COUNTS}}};     // array - value per year (e.g. [1234, 2567, ...])
+        var renewable_counts = {{{RENEWABLE_COUNTS}}};     // array - value per year (e.g. [1234, 2567, ...])
+        var years = {{{YEARS}}};                          // array - value per year (e.g. [1234, 2567, ...])
     </script>
 </head>
 <body >
@@ -224,7 +230,7 @@
             <img src="/img/{{{STATE NAME}}}.png" alt="{{{STATE_NAME}}} Flag">
         </div>
         
-        <div class="table">
+        <div class="table" style="overflow-x: auto;">
             <table>
                 <tr class="text-center">
                     <td>Year</td>
@@ -239,16 +245,14 @@
                 {{{CONTENT HERE}}}
             </table>
         </div>
-        <canvas id="stateChart" width="400" height="200"></canvas>
+        <div style="overflow-x: auto;">
+            <div class="text-center" style="width: 800px;"><h5>Energy Consumption for {{{CHART_STATE}}} By Year</h5></div>
+            <div style="height: 400px; width: 800px;">
+                <canvas id="stateChart"></canvas>
+            </div>
+        </div>
         <script>
-            var coal_counts = {{{COAL_COUNTS}}};               // array - value per year (e.g. [1234, 2567, ...])
-            var natural_gas_counts = {{{NATURAL_GAS_COUNTS}}}; // array - value per year (e.g. [1234, 2567, ...])
-            var nuclear_counts = {{{NUCLEAR_COUNTS}}};         // array - value per year (e.g. [1234, 2567, ...])
-            var petroleum_counts = {{{PETROLEUM_COUNTS}}};     // array - value per year (e.g. [1234, 2567, ...])
-            var renewable_counts = {{{RENEWABLE_COUNTS}}};     // array - value per year (e.g. [1234, 2567, ...])
-            var years = {{{YEARS}}}                            // array - value per year (e.g. [1234, 2567, ...])
             const ctx = document.getElementById('stateChart').getContext('2d');
-            console.log(coal_counts);
             const myChart = new Chart(ctx, {
                 type: 'line',
                 data:{

@@ -6,7 +6,7 @@
     <title>US Energy Consumption</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/assets/css/foundation.css">
-    <script type="application/javascript" src="/functions.js">
+    <script type="application/javascript">
         // `energy_type` and object of consumption per year per state => set these variables equal to appropriate value
         //   * these variables will be defined and accessible from any script loaded after this one
         var energy_type = {{{ENERGY_TYPE}}};
@@ -223,7 +223,7 @@
             <img src="/img/{{{ENERGY TYPE}}}.png" alt="{{{ALT_TYPE}}} Picture">
         </div>
 
-    <div style="overflow-x: scroll;">
+    <div style="overflow-x: auto;">
         <table>
             <tr>
                 <th>Year</th>
