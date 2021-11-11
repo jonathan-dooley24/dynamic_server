@@ -103,7 +103,7 @@ app.get('/state/:selected_state', (req, res) => {
             res.status(404).send("File not found");
         } 
         else {
-            db.all('SELECT * FROM Consumption INNER JOIN States ON Consumption.state_abbreviation = States.state_abbreviation WHERE Consumption.state_abbreviation = ?', [req.params.selected_state], (err, rows) => {
+            db.all('SELECT * FROM Consumption INNER JOIN States ON Consumption.state_abbreviation = States.state_abbreviation WHERE Consumption.state_abbreviation = ? ORDER BY Consumption.year ASC', [req.params.selected_state], (err, rows) => {
                 if(err){
                     res.status(404).send("Error: Unable to gather data");
                 }
@@ -119,6 +119,7 @@ app.get('/state/:selected_state', (req, res) => {
                         let renewableCounts = '[';
                         let years = '[';
                         let strSoFar = '';
+                        let strSoFar = ''; 
                         rows.forEach(row => {
                             strSoFar += "<tr class='text-center'>";
                             strSoFar += "<td>" + row.year + "</td>";
@@ -158,6 +159,10 @@ app.get('/state/:selected_state', (req, res) => {
                         response = response.replace("{{{NUCLEAR_COUNTS}}}", nuclearCounts);
                         response = response.replace("{{{PETROLEUM_COUNTS}}}", petroleumCounts);
                         response = response.replace("{{{RENEWABLE_COUNTS}}}", renewableCounts);
+                        });
+                        let response = template.replace("{{{state}}}" , rows[0].state_name);
+                        response = response.replace('{{{STATE_NAME}}}', rows[0].state_name);
+                        response = response.replace('{{{STATE NAME}}}', rows[0].state_name.toLowerCase());
                         response = response.replace('{{{CONTENT HERE}}}', strSoFar);
 
                         let next = getNextState(req.params.selected_state);
@@ -189,8 +194,8 @@ app.get('/energy/:selected_energy_source', (req, res) => {
             if(!energySources.includes(req.params.selected_energy_source)){
                 res.status(404).send('Error: no energy source by name: ' + req.params.selected_energy_source);
             }
-            else{
-                db.all('SELECT Consumption.year, Consumption.state_abbreviation, Consumption.' + req.params.selected_energy_source + ', States.state_name FROM Consumption INNER JOIN States ON Consumption.state_abbreviation = States.state_abbreviation', (err, rows) => {
+            else{ 
+                db.all('SELECT Consumption.year, Consumption.state_abbreviation, Consumption.' + req.params.selected_energy_source + ', States.state_name FROM Consumption INNER JOIN States ON Consumption.state_abbreviation = States.state_abbreviation ORDER BY Consumption.year, Consumption.state_abbreviation ASC', (err, rows) => { 
                     if(err){
                         res.status(404).send('Error: Query Invalid.');
                     }
@@ -198,6 +203,8 @@ app.get('/energy/:selected_energy_source', (req, res) => {
                         let energy = req.params.selected_energy_source[0].toUpperCase() + req.params.selected_energy_source.substring(1);
                         energy = energy.replace("_"," ");
                         let response = template.replace('{{{ENERGY}}}', energy);
+                        response = response.replace('{{{ENERGY TYPE}}}',req.params.selected_energy_source);
+                        response = response.replace('{{{ALT_TYPE}}}', energy);
 
                         let next = getNextEnergy(req.params.selected_energy_source);
                         let prev =getPrevEnergy(req.params.selected_energy_source);
@@ -209,9 +216,45 @@ app.get('/energy/:selected_energy_source', (req, res) => {
                         response = response.replace('{{{NEXT ENERGY}}}',next[0].toUpperCase() + next.substring(1));
 
                         let strSoFar = '';
+                        /*
+                        each row is the data for one state at one year for the specified energy source,
+                        this makes the for each loop tricky because we really want to start a new row after each year followed by the 51 
+                        states' values for the specified energy source. Using a counter to keep track.
+                        */
+                        
+                        var counter = 0;
                         rows.forEach(row => {
-                            strSoFar += JSON.stringify(row);
+                            
+                            if((counter % 51) == 0){
+                                strSoFar += "</tr>";
+                            }
+                            if((counter % 51) == 0){
+                                strSoFar += "<tr class='text-center'>";
+                                strSoFar += "<td>" + row.year + "</td>";
+                            }
+                            //
+                            if(req.params.selected_energy_source == 'coal'){
+                                strSoFar += "<td>" + row.coal + "</td>";
+                            }
+                            if(req.params.selected_energy_source == 'natural_gas'){
+                                strSoFar += "<td>" + row.natural_gas + "</td>";
+                            }
+                            if(req.params.selected_energy_source == 'nuclear'){
+                                strSoFar += "<td>" + row.nuclear + "</td>";
+                            }
+                            if(req.params.selected_energy_source == 'petroleum'){
+                                strSoFar += "<td>" + row.petroleum + "</td>";
+                            }
+                            if(req.params.selected_energy_source == 'renewable'){
+                                strSoFar += "<td>" + row.renewable + "</td>";
+                            }
+                            //strSoFar += "<td>" + row.selected + "</td>";
+                            
+                            
+                            counter++;
+                           //strSoFar += JSON.stringify(row);
                         });
+                        response = response.replace('{{{CONTENT HERE}}}', strSoFar);
                         res.status(200).type('html').send(response);
                     }
                 });
