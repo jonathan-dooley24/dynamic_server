@@ -119,7 +119,6 @@ app.get('/state/:selected_state', (req, res) => {
                         let renewableCounts = '[';
                         let years = '[';
                         let strSoFar = '';
-                        let strSoFar = ''; 
                         rows.forEach(row => {
                             strSoFar += "<tr class='text-center'>";
                             strSoFar += "<td>" + row.year + "</td>";
@@ -159,8 +158,8 @@ app.get('/state/:selected_state', (req, res) => {
                         response = response.replace("{{{NUCLEAR_COUNTS}}}", nuclearCounts);
                         response = response.replace("{{{PETROLEUM_COUNTS}}}", petroleumCounts);
                         response = response.replace("{{{RENEWABLE_COUNTS}}}", renewableCounts);
-                        });
-                        let response = template.replace("{{{state}}}" , rows[0].state_name);
+                        
+                        response = response.replace("{{{state}}}" , rows[0].state_name);
                         response = response.replace('{{{STATE_NAME}}}', rows[0].state_name);
                         response = response.replace('{{{STATE NAME}}}', rows[0].state_name.toLowerCase());
                         response = response.replace('{{{CONTENT HERE}}}', strSoFar);
