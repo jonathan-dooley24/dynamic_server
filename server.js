@@ -115,7 +115,6 @@ app.get('/state/:selected_state', (req, res) => {
                         let strSoFar = ''; 
                          
                         rows.forEach(row => {
-                            /*
                             strSoFar += "<tr class='text-center'>";
                             strSoFar += "<td>" + row.year + "</td>";
                             strSoFar += "<td>" + row.coal + "</td>";
@@ -126,10 +125,10 @@ app.get('/state/:selected_state', (req, res) => {
                             strSoFar += "<td>" + row.natural_gas + "</td>";
                             strSoFar += "<td>" + (row.coal + row.natural_gas + row.nuclear + row.petroleum + row.renewable) + "</td";
                             strSoFar += "</tr>";
-                            */
-                             strSoFar += JSON.stringify(row);
                         });
                         let response = template.replace("{{{state}}}" , rows[0].state_name);
+                        response = response.replace('{{{STATE_NAME}}}', rows[0].state_name);
+                        response = response.replace('{{{STATE NAME}}}', rows[0].state_name.toLowerCase());
                         response = response.replace('{{{CONTENT HERE}}}', strSoFar);
 
                         let next = getNextState(req.params.selected_state);
@@ -170,6 +169,8 @@ app.get('/energy/:selected_energy_source', (req, res) => {
                         let energy = req.params.selected_energy_source[0].toUpperCase() + req.params.selected_energy_source.substring(1);
                         energy = energy.replace("_"," ");
                         let response = template.replace('{{{ENERGY}}}', energy);
+                        response = response.replace('{{{ENERGY TYPE}}}',req.params.selected_energy_source);
+                        response = response.replace('{{{ALT_TYPE}}}', energy);
 
                         let next = getNextEnergy(req.params.selected_energy_source);
                         let prev =getPrevEnergy(req.params.selected_energy_source);
